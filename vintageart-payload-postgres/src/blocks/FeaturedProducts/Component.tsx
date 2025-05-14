@@ -2,11 +2,11 @@ import { cn } from '@/utilities/ui'
 import React from 'react'
 import RichText from '@/components/RichText'
 
-import type { ContentBlock as ContentBlockProps } from '@/payload-types'
+import type { FeaturedProductsBlock as FeaturedType } from '@/payload-types'
 
 import { CMSLink } from '../../components/Link'
 
-export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
+export const FeaturedProductsBlock: React.FC<FeaturedType> = (props) => {
   const { columns } = props
 
   const colsSpanClasses = {

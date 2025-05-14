@@ -55,6 +55,50 @@ const columnFields: Field[] = [
     required: true,
   },
   {
+    name: 'buyNowLink',
+    type: 'group',
+    fields: [
+      {
+        name: 'type',
+        type: 'select',
+        options: ['custom', 'reference'],
+      },
+      {
+        name: 'label',
+        type: 'text',
+        required: true,
+      },
+      {
+        name: 'newTab',
+        type: 'checkbox',
+      },
+      {
+        name: 'url',
+        type: 'text',
+        admin: {
+          condition: (_, siblingData) => siblingData.type === 'custom',
+        },
+      },
+      {
+        name: 'reference',
+        type: 'relationship',
+        relationTo: ['pages', 'products'],
+        admin: {
+          condition: (_, siblingData) => siblingData.type === 'reference',
+        },
+      },
+      {
+        name: 'appearance',
+        type: 'select',
+        options: ['default', 'outline'],
+      },
+    ],
+  },
+  {
+    name: 'price',
+    type: 'number',
+  },
+  {
     name: 'enableLink',
     type: 'checkbox',
   },
@@ -69,9 +113,9 @@ const columnFields: Field[] = [
   }),
 ]
 
-export const Content: Block = {
-  slug: 'content',
-  interfaceName: 'ContentBlock',
+export const FeaturedProductsBlock: Block = {
+  slug: 'featured-products',
+  interfaceName: 'FeaturedProductsBlock',
   fields: [
     {
       name: 'columns',
