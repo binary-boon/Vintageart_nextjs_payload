@@ -193,45 +193,7 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (
-    | CallToActionBlock
-    | ContentBlock
-    | MediaBlock
-    | ArchiveBlock
-    | FormBlock
-    
-    | {
-        heading: string;
-        description?: {
-          root: {
-            type: string;
-            children: {
-              type: string;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        products: {
-          product: number | Product;
-          id?: string | null;
-        }[];
-        viewAllLink?: {
-          text?: string | null;
-          url?: string | null;
-        };
-        layout?: ('grid' | 'carousel') | null;
-        productsPerRow?: ('2' | '3' | '4') | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'featuredProducts';
-      }
-  )[];
+  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock | FeaturedProductsBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -523,84 +485,6 @@ export interface ContentBlock {
   blockName?: string | null;
   blockType: 'content';
 }
-
-
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ContentBlock".
- */
-export interface FeaturedProductsBlock {
-  columns?:
-    | {
-        size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
-        richText?: {
-          root: {
-            type: string;
-            children: {
-              type: string;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-
-        
-        enableLink?: boolean | null;
-
-        image?:number|Media;
-        price :number;
-
-        link?: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?: {
-          relationTo: 'pages' | 'posts';
-          value: number | Page | Post;
-                      } | null;
-            url?: string | null;
-            label: string;
-            appearance?: 'default' | 'outline' | null;
-            } | null;
-
-        
-        buynowlink?: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'products';
-                value: number | Product;
-              } | null);
-          url?: string | null;
-          label: string;
-          /**
-           * Choose how the link should be rendered.
-           */
-          appearance?: ('default' | 'outline') | null;
-        };
-        id?: string | null;
-      }[]
-    | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'productsBlock';
-}
-
-
-
-
-
-
-
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "MediaBlock".
@@ -844,6 +728,74 @@ export interface Form {
     | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeaturedProductsBlock".
+ */
+export interface FeaturedProductsBlock {
+  columns?:
+    | {
+        size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
+        richText?: {
+          root: {
+            type: string;
+            children: {
+              type: string;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        image: number | Media;
+        btn: {
+          type?: ('custom' | 'reference') | null;
+          label: string;
+          newTab?: boolean | null;
+          url?: string | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'products';
+                value: number | Product;
+              } | null);
+          appearance?: ('default' | 'outline') | null;
+        };
+        price?: number | null;
+        enableLink?: boolean | null;
+        link?: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featuredProducts';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1154,28 +1106,7 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
-        featuredProducts?:
-          | T
-          | {
-              heading?: T;
-              description?: T;
-              products?:
-                | T
-                | {
-                    product?: T;
-                    id?: T;
-                  };
-              viewAllLink?:
-                | T
-                | {
-                    text?: T;
-                    url?: T;
-                  };
-              layout?: T;
-              productsPerRow?: T;
-              id?: T;
-              blockName?: T;
-            };
+        featuredProducts?: T | FeaturedProductsBlockSelect<T>;
       };
   meta?:
     | T
@@ -1272,6 +1203,44 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeaturedProductsBlock_select".
+ */
+export interface FeaturedProductsBlockSelect<T extends boolean = true> {
+  columns?:
+    | T
+    | {
+        size?: T;
+        richText?: T;
+        image?: T;
+        btn?:
+          | T
+          | {
+              type?: T;
+              label?: T;
+              newTab?: T;
+              url?: T;
+              reference?: T;
+              appearance?: T;
+            };
+        price?: T;
+        enableLink?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

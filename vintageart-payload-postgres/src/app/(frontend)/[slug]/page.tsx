@@ -17,6 +17,7 @@ export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
   const pages = await payload.find({
     collection: 'pages',
+    depth: 3,
     draft: false,
     limit: 1000,
 
@@ -57,7 +58,6 @@ export default async function Page({ params: paramsPromise }: Args) {
   })
 
   // Remove this code once your website is seeded
-  
 
   if (!page) {
     return <PayloadRedirects url={url} />
@@ -96,7 +96,7 @@ const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
   const result = await payload.find({
     collection: 'pages',
     draft,
-    depth: 3, // ✅ added this line
+    depth: 4, // ✅ added this line
     limit: 1,
     pagination: false,
     overrideAccess: draft,

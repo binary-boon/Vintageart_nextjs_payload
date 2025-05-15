@@ -55,7 +55,7 @@ const columnFields: Field[] = [
     required: true,
   },
   {
-    name: 'buyNowLink',
+    name: 'btn',
     type: 'group',
     fields: [
       {
@@ -114,7 +114,7 @@ const columnFields: Field[] = [
 ]
 
 export const FeaturedProductsBlock: Block = {
-  slug: 'featured-products',
+  slug: 'featuredProducts',
   interfaceName: 'FeaturedProductsBlock',
   fields: [
     {
