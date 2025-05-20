@@ -1,51 +1,87 @@
-import React from 'react'
+'use client'
+import { cn } from '@/utilities/ui'
+import useClickableCard from '@/utilities/useClickableCard'
 import Link from 'next/link'
-import { Product } from '@/payload-types'
+import React, { Fragment } from 'react'
+
+import type { Post, Product } from '@/payload-types'
+
 import { Media } from '@/components/Media'
-import { formatPrice } from '@/utilities/formatPrice'
 
-type ProductCardProps = {
-  product: Product
+export type ProductsCardData = Pick<
+  Product,
+  'id' | 'slug' | 'image' | 'meta' | 'name' | 'categories'
+>
+
+export const ProductCard: React.FC<{
+  alignItems?: 'center'
   className?: string
-}
+  doc?: ProductsCardData
+  relationTo?: 'products'
+  showCategories?: boolean
+  name?: string
+}> = (props) => {
+  const { card, link } = useClickableCard({})
+  const { className, doc, relationTo, showCategories, name: titleFromProps } = props
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, className = '' }) => {
-  const { title, slug, featuredImage, price, salePrice } = product
+  const { slug, categories, meta, name } = doc || {}
+  const { description, image: metaImage } = meta || {}
 
-  const isOnSale = salePrice && salePrice < price
-  const displayPrice = isOnSale ? salePrice : price
+  const hasCategories = categories && Array.isArray(categories) && categories.length > 0
+  const titleToUse = titleFromProps || name
+  const sanitizedDescription = description?.replace(/\s/g, ' ') // replace non-breaking space with white space
+  const href = `/${relationTo}/${slug}`
 
   return (
-    <Link
-      href={`/products/${slug}`}
-      className={`group block h-full transition-transform hover:-translate-y-1 ${className}`}
+    <article
+      className={cn(
+        'border border-border rounded-lg overflow-hidden bg-card hover:cursor-pointer',
+        className,
+      )}
+      ref={card.ref}
     >
-      <div className="relative aspect-square overflow-hidden rounded-lg mb-3 bg-gray-100">
-        {featuredImage && typeof featuredImage === 'object' && (
-          <Media
-            resource={featuredImage}
-            alt={title || 'Product image'}
-            fill
-            className="object-cover transition-transform group-hover:scale-105"
-            sizes="(min-width: 1024px) 25vw, 50vw"
-          />
-        )}
+      <div className="relative w-full ">
+        {!metaImage && <div className="">No image</div>}
+        {metaImage && typeof metaImage !== 'string' && <Media resource={metaImage} size="33vw" />}
+      </div>
+      <div className="p-4">
+        {showCategories && hasCategories && (
+          <div className="uppercase text-sm mb-4">
+            {showCategories && hasCategories && (
+              <div>
+                {categories?.map((category, index) => {
+                  if (typeof category === 'object') {
+                    const { title: titleFromCategory } = category
 
-        {isOnSale && (
-          <div className="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-sm">
-            SALE
+                    const categoryTitle = titleFromCategory || 'Untitled category'
+
+                    const isLast = index === categories.length - 1
+
+                    return (
+                      <Fragment key={index}>
+                        {categoryTitle}
+                        {!isLast && <Fragment>, &nbsp;</Fragment>}
+                      </Fragment>
+                    )
+                  }
+
+                  return null
+                })}
+              </div>
+            )}
           </div>
         )}
-      </div>
-
-      <h3 className="text-lg font-medium mb-1 text-gray-900">{title}</h3>
-
-      <div className="flex items-center">
-        <span className="font-medium text-gray-900">{formatPrice(displayPrice)}</span>
-        {isOnSale && (
-          <span className="ml-2 text-sm text-gray-500 line-through">{formatPrice(price)}</span>
+        {titleToUse && (
+          <div className="prose">
+            <h3>
+              <Link className="not-prose" href={href} ref={link.ref}>
+                {titleToUse}
+              </Link>
+            </h3>
+          </div>
         )}
+        {description && <div className="mt-2">{description && <p>{sanitizedDescription}</p>}</div>}
       </div>
-    </Link>
+    </article>
   )
 }

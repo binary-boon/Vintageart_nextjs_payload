@@ -753,6 +753,16 @@ export interface FeaturedProductsBlock {
           [k: string]: unknown;
         } | null;
         image: number | Media;
+        populateBy?: ('collection' | 'selection') | null;
+        relationTo?: 'posts' | null;
+        categories?: (number | Category)[] | null;
+        limit?: number | null;
+        selectedDocs?:
+          | {
+              relationTo: 'posts';
+              value: number | Post;
+            }[]
+          | null;
         btn: {
           type?: ('custom' | 'reference') | null;
           label: string;
@@ -760,8 +770,8 @@ export interface FeaturedProductsBlock {
           url?: string | null;
           reference?:
             | ({
-                relationTo: 'pages';
-                value: number | Page;
+                relationTo: 'categories';
+                value: number | Category;
               } | null)
             | ({
                 relationTo: 'products';
@@ -804,13 +814,23 @@ export interface FeaturedProductsBlock {
 export interface Product {
   id: number;
   name: string;
-  description?: string | null;
   price: number;
   image?: (number | null) | Media;
-  isFeatured?: boolean | null;
   slug?: string | null;
+  relatedPosts?: (number | Product)[] | null;
+  categories?: (number | Category)[] | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
+  ispublished:boolean;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1217,6 +1237,11 @@ export interface FeaturedProductsBlockSelect<T extends boolean = true> {
         size?: T;
         richText?: T;
         image?: T;
+        populateBy?: T;
+        relationTo?: T;
+        categories?: T;
+        limit?: T;
+        selectedDocs?: T;
         btn?:
           | T
           | {
@@ -1410,11 +1435,17 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface ProductsSelect<T extends boolean = true> {
   name?: T;
-  description?: T;
   price?: T;
   image?: T;
-  isFeatured?: T;
   slug?: T;
+  categories?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

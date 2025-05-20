@@ -56,6 +56,7 @@ export const Pages: CollectionConfig<'pages'> = {
       generatePreviewPath({
         slug: typeof data?.slug === 'string' ? data.slug : '',
         collection: 'pages',
+        
         req,
       }),
     useAsTitle: 'title',
