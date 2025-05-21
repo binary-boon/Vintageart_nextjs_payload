@@ -754,7 +754,7 @@ export interface FeaturedProductsBlock {
         } | null;
         image: number | Media;
         populateBy?: ('collection' | 'selection') | null;
-        relationTo?: 'posts' | null;
+        relationTo?: 'products' | null;
         categories?: (number | Category)[] | null;
         limit?: number | null;
         selectedDocs?:
@@ -813,11 +813,8 @@ export interface FeaturedProductsBlock {
  */
 export interface Product {
   id: number;
-  name: string;
-  price: number;
-  image?: (number | null) | Media;
-  slug?: string | null;
-  relatedPosts?: (number | Product)[] | null;
+  title: string;
+  heroImage?: (number | null) | Media;
   categories?: (number | Category)[] | null;
   meta?: {
     title?: string | null;
@@ -827,10 +824,11 @@ export interface Product {
     image?: (number | null) | Media;
     description?: string | null;
   };
+  slug?: string | null;
+  slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-  ispublished:boolean;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1434,10 +1432,8 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "products_select".
  */
 export interface ProductsSelect<T extends boolean = true> {
-  name?: T;
-  price?: T;
-  image?: T;
-  slug?: T;
+  title?: T;
+  heroImage?: T;
   categories?: T;
   meta?:
     | T
@@ -1446,8 +1442,11 @@ export interface ProductsSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  slug?: T;
+  slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1823,6 +1822,10 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'posts';
           value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'products';
+          value: number | Product;
         } | null);
     global?: string | null;
     user?: (number | null) | User;

@@ -10,7 +10,7 @@ import { Media } from '@/components/Media'
 
 export type ProductsCardData = Pick<
   Product,
-  'id' | 'slug' | 'image' | 'meta' | 'name' | 'categories'
+  'id' | 'slug' | 'image' | 'meta' | 'name' | 'categories'|'price'
 >
 
 export const ProductCard: React.FC<{
