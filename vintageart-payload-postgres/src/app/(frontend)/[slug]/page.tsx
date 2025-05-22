@@ -17,7 +17,7 @@ export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
   const pages = await payload.find({
     collection: 'pages',
-    depth: 3,
+    depth: 5,
     draft: false,
     limit: 1000,
 
@@ -96,7 +96,7 @@ const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
   const result = await payload.find({
     collection: 'pages',
     draft,
-    depth: 4, // ✅ added this line
+    depth: 3, // ✅ added this line
     limit: 1,
     pagination: false,
     overrideAccess: draft,

@@ -734,54 +734,25 @@ export interface Form {
  * via the `definition` "FeaturedProductsBlock".
  */
 export interface FeaturedProductsBlock {
-  columns?:
+  introContent?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  selectedProducts: (number | Product)[];
+  links?:
     | {
-        size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
-        richText?: {
-          root: {
-            type: string;
-            children: {
-              type: string;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        image: number | Media;
-        populateBy?: ('collection' | 'selection') | null;
-        relationTo?: 'products' | null;
-        categories?: (number | Category)[] | null;
-        limit?: number | null;
-        selectedDocs?:
-          | {
-              relationTo: 'posts';
-              value: number | Post;
-            }[]
-          | null;
-        btn: {
-          type?: ('custom' | 'reference') | null;
-          label: string;
-          newTab?: boolean | null;
-          url?: string | null;
-          reference?:
-            | ({
-                relationTo: 'categories';
-                value: number | Category;
-              } | null)
-            | ({
-                relationTo: 'products';
-                value: number | Product;
-              } | null);
-          appearance?: ('default' | 'outline') | null;
-        };
-        price?: number | null;
-        enableLink?: boolean | null;
-        link?: {
+        link: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
           reference?:
@@ -813,7 +784,10 @@ export interface FeaturedProductsBlock {
  */
 export interface Product {
   id: number;
-  title: string;
+  name: string;
+  description?: string | null;
+  price: number;
+  image?: (number | null) | Media;
   heroImage?: (number | null) | Media;
   categories?: (number | Category)[] | null;
   meta?: {
@@ -824,6 +798,30 @@ export interface Product {
     image?: (number | null) | Media;
     description?: string | null;
   };
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -1229,29 +1227,11 @@ export interface FormBlockSelect<T extends boolean = true> {
  * via the `definition` "FeaturedProductsBlock_select".
  */
 export interface FeaturedProductsBlockSelect<T extends boolean = true> {
-  columns?:
+  introContent?: T;
+  selectedProducts?: T;
+  links?:
     | T
     | {
-        size?: T;
-        richText?: T;
-        image?: T;
-        populateBy?: T;
-        relationTo?: T;
-        categories?: T;
-        limit?: T;
-        selectedDocs?: T;
-        btn?:
-          | T
-          | {
-              type?: T;
-              label?: T;
-              newTab?: T;
-              url?: T;
-              reference?: T;
-              appearance?: T;
-            };
-        price?: T;
-        enableLink?: T;
         link?:
           | T
           | {
@@ -1432,7 +1412,10 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "products_select".
  */
 export interface ProductsSelect<T extends boolean = true> {
-  title?: T;
+  name?: T;
+  description?: T;
+  price?: T;
+  image?: T;
   heroImage?: T;
   categories?: T;
   meta?:
@@ -1442,6 +1425,22 @@ export interface ProductsSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+      
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };    
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
